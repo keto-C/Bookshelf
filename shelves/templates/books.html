@@ -1,0 +1,123 @@
+{% extends "base.html" %} {% block title %} Books {% endblock %} {% block body%}
+{% include "user.html" %}
+
+<form method="POST" enctype="multipart/form-data" class="d-flex" role="search" style="
+    height: 40px;
+    width: 100%;
+    margin-bottom: 30px;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+  ">
+  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query"
+    style="width: 50rem" />
+  <button class="btn btn-outline-success" type="submit" value="Search">
+    Search
+  </button>
+</form>
+
+<div class="d-flex flex-column justify-content-center">
+  <div class="d-flex justify-content-center">
+    <div style="display: inline-grid; grid-template-columns: auto auto auto auto">
+      {% for book in books %}
+      <div class="card" style="
+          width: 18rem;
+          height: 20rem;
+          margin: 5px;
+          background: rgb(238, 174, 202);
+          background: linear-gradient(
+            180deg,
+            rgba(238, 174, 202, 1) 0%,
+            rgba(148, 187, 233, 1) 80%
+          );
+          border: none;
+        ">
+        <div class="card-body">
+          <h5 class="card-title">{{book.title}}</h5>
+          <p>{{book.author}}</p>
+          <a href="/shelves/{{ book.shelf_id }}/delete_book/{{ book.id }}" class="btn btn-danger">Remove</a>
+          <a href="/shelves/{{ book.shelf_id }}/borrow_book/{{ book.id }}" class="btn btn-warning">Borrow</a>
+          <!-- Button trigger modal -->
+          <button type="button" class="mt-3 btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModalCenter2">
+            Move
+          </button>
+          <div class="modal fade" id="exampleModalCenter2" tabindex="-1" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form id="profilePicForm" enctype="multipart/form-data" method="POST"
+                action="{{ url_for('shelves.move_book') }}">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Move book</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <h4 for="profilePicInput">Choose shelf:</h4>
+                      <select class="form-control-file" id="shelect" name="shelect">
+                        <option value="moveTo">Move to</option>
+                        {% for shelf in shelves %}
+                           <option value="{{ shelf.id }}">{{ shelf.shelf_name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="card" style="
+          width: 18rem;
+          height: 20rem;
+          margin: 5px;
+          background: rgb(238, 174, 202);
+          background: linear-gradient(
+            180deg,
+            rgba(238, 174, 202, 1) 0%,
+            rgba(148, 187, 233, 1) 80%
+          );
+          border: none;
+        ">
+        <div class="card-body">
+          <h5 class="card-title">Add new book</h5>
+          <a href="/shelves/{{ shelf_id }}/add_book" class="btn btn-danger">+</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class=" mt-4 text-center">Borrowed</h2>
+  <div class=" mt-4 d-flex justify-content-center">
+    {% if borroweds %}
+    <div style="display: inline-grid; grid-template-columns: auto auto auto auto">
+      {% for book in borroweds %}
+      <div class="card" style="width: 18rem; height: 20rem; margin-right: 10px;">
+        <div class="card-body">
+          <h5 class="card-title">{{book.title}}</h5>
+          <p>{{book.author}}</p>
+          <br>
+          <a href="/shelves/{{ book.shelf_id }}/put_back_book/{{ book.id }}" class="btn btn-danger">Put back</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="d-felx flex-column">
+
+      <p>You haven't borrowed any books from this shelf</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class=" mt-4 d-flex justify-content-center">
+    <a class="btn btn-outline-primary" href="/shelves" style="width: 25rem;">Go back to shelves</a>
+  </div>
+</div>
+{% endblock %}
